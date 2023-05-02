@@ -5,6 +5,7 @@ import { getHeaderTitle } from '@react-navigation/elements';
 import Entypo from 'react-native-vector-icons/Entypo';
 
 import HomeScreen from '../screens/HomeScreen';
+import MenuScreen from '../screens/MenuScreen';
 import ShoppingCartScreen from '../screens/ShoppingCartScreen';
 import HomeStack from './HomeStack';
 import ShoppingCartStack from './ShoppingCartStack';
@@ -40,7 +41,7 @@ const BottomTabNav = () => {
             }}
         />
         <Tab.Screen 
-            name="Shopping Cart" 
+            name="shoppingCart" 
             component={ShoppingCartStack} 
             options={{
                 tabBarIcon: ({color, size}) => (
@@ -50,8 +51,8 @@ const BottomTabNav = () => {
             }}
         />
         <Tab.Screen 
-            name="More" 
-            component={HomeScreen} 
+            name="Menu" 
+            component={MenuScreen} 
             options={{
                 tabBarIcon: ({color, size}) => (
                     <Entypo name="menu" color={color} size={size} />

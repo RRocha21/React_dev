@@ -1,9 +1,16 @@
 import { View, Text, TextInput, Alert, ScrollView, KeyboardAvoidingView, Platform} from 'react-native'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {Picker} from '@react-native-picker/picker';
 import styles from './styles';
 import countryList from 'country-list'
 import Button from '../../components/Button';
+
+import { DataStore } from '@aws-amplify/datastore';
+import { Order, OrderProduct, CartProduct } from '../../models';
+import { Auth, API, graphqlOperation } from 'aws-amplify';
+import { createPaymentIntent } from '../../graphql/mutations';
+
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 const countries = countryList.getData();
 
@@ -17,6 +24,79 @@ const AddressScreen = () => {
     const [addressError, setaddressError] = React.useState('');
 
     const [city, setCity] = React.useState('');
+
+    const navigation = useNavigation();
+
+    const route = useRoute();
+    const cartTotal = Math.floor(route.params?.totalPrice * 100 || 0);
+
+    useEffect(() => {
+        initPaymentSheet();
+    }, []);
+
+    const fetchPaymentIntent = async () => {
+        const response = await API.graphql(
+            graphqlOperation(
+                createPaymentIntent ,
+                {
+                    amount: cartTotal,
+                    currency: 'usd',
+                }
+            )
+        );
+        console.log(response);
+    }
+
+    const initPaymentSheet = async () => {
+        await fetchPaymentIntent();
+    }
+
+    const saveOrder = async () => {
+        // create a new order in the database
+        const userData = await Auth.currentAuthenticatedUser();
+        
+
+        const newOrder = await DataStore.save(
+            new Order({
+                userSub: userData.attributes.sub,
+                fullName: fullName,
+                phoneNumber: phoneNumber,
+                address: address,
+                city: city,
+                country: country,
+            })
+        );
+
+        // attach all the cart items to the order   
+
+        const cartProducts = await DataStore.query(CartProduct).then(fetchedCartProducts => {
+            const filteredCartProducts = fetchedCartProducts.filter(cp => cp.userSub === userData.attributes.sub);
+            return filteredCartProducts;
+        });
+        
+        await Promise.all(cartProducts.map(cartProduct => {
+            DataStore.save(
+                new OrderProduct({
+                    quantity: cartProduct.quantity,
+                    option: cartProduct.option,
+                    productId: cartProduct.productId,
+                    orderId: newOrder.id,
+                })
+            )
+        }));
+
+        // delete all the cart items from the database
+
+        await Promise.all(
+            cartProducts.map(cartProduct => 
+                DataStore.delete(cartProduct)
+            )
+        );
+
+        // redirect home
+
+        navigation.navigate('Home');
+    };
 
     const onCheckout = () => {
 
@@ -46,6 +126,7 @@ const AddressScreen = () => {
         }
         console.warn('Success');
 
+        saveOrder();
     }
 
     const validateAddress = () => {
@@ -114,15 +195,6 @@ const AddressScreen = () => {
                     {!!addressError && <Text style={styles.errorLabel}>{addressError}</Text>}
                 </View>
                 {/* City */}
-                <View style = {styles.row}>
-                    <Text style = {styles.label}>City</Text>
-                    <TextInput 
-                        style = {styles.input} 
-                        placeholder='City'
-                        value={city}
-                        onChangeText={setCity}
-                    />
-                </View>
                 <View style = {styles.row}>
                     <Text style = {styles.label}>City</Text>
                     <TextInput 

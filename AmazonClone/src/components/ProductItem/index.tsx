@@ -69,12 +69,12 @@ const ProductItem = ({item}: ProductItemProps) => {
                   );
                 }
               })}
-              <Text style = {styles.ratingsText}>{item.avgRating} ({item.ratings})</Text>
+              <Text style = {styles.ratingsText}>{item.avgRating.toFixed(2)} ({item.ratings})</Text>
            </View>
             
            <Text style = {styles.price}>
-            from ${item.price}
-            {item.oldPrice && <Text style = {styles.oldPrice}>${item.oldPrice}</Text>}
+            from ${item.price.toFixed(2)}
+            {item.oldPrice && <Text style = {styles.oldPrice}>${item.oldPrice.toFixed(2)}</Text>}
            </Text>
 
         </View>

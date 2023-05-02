@@ -1,0 +1,30 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-amazonclone-dev-235401-authRole",
+      "UnauthRoleArn": "arn:aws:iam::365563144900:role/amplify-amazonclone-dev-235401-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::365563144900:role/amplify-amazonclone-dev-235401-authRole",
+      "Region": "eu-west-1",
+      "DeploymentBucketName": "amplify-amazonclone-dev-235401-deployment",
+      "UnauthRoleName": "amplify-amazonclone-dev-235401-unauthRole",
+      "StackName": "amplify-amazonclone-dev-235401",
+      "StackId": "arn:aws:cloudformation:eu-west-1:365563144900:stack/amplify-amazonclone-dev-235401/e97d1980-de3b-11ed-9328-06c298034637",
+      "AmplifyAppId": "d3no7zaxmpeu63"
+    },
+    "categories": {
+      "auth": {
+        "amazoncloneee67d500": {},
+        "userPoolGroups": {}
+      },
+      "api": {
+        "amazonclone": {}
+      },
+      "function": {
+        "CreatePaymentIntent": {
+          "deploymentBucketName": "amplify-amazonclone-dev-235401-deployment",
+          "s3Key": "amplify-builds/CreatePaymentIntent-4c37772f714a41793772-build.zip"
+        }
+      }
+    }
+  }
+}

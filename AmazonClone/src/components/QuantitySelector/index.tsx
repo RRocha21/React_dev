@@ -1,13 +1,21 @@
 import { View, Text, Pressable, StyleSheet } from 'react-native'
 import React from 'react'
 
-const QuantitySelector = ({quantity,setQuantity}) => {
+interface QuantityProps {
+    quantity: number;
+    setQuantity: (newQuantity: number) => void;
+  }
+
+const QuantitySelector = ({quantity,setQuantity}: QuantityProps) => {
     const onMinus = () => {
-        setQuantity((quantity: number) => Math.max(0, quantity - 1));
+        if (quantity > 1) {
+            setQuantity(quantity - 1);
+          }
     }
     const onPlus = () => {
-        setQuantity((quantity: number) => quantity + 1);
+        setQuantity(quantity + 1);
     }
+
   return (
     <View style = {styles.root}>
         <View style = {styles.quantityContainer}>
